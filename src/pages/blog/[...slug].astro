@@ -3,8 +3,16 @@ import { getCollection, getEntry, render } from 'astro:content';
 import NextLayout from '../../layouts/NextLayout.astro';
 import Giscus from '../../components/Giscus.astro';
 
+// Generate static paths for all posts
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({
+    params: { slug: post.id.replace('.md', '') },
+  }));
+}
+
 // Get slug from URL params
-const slug = Astro.params.slug;
+const { slug } = Astro.params;
 
 // Get post from content collection
 const postEntry = await getEntry('posts', `${slug}.md`);
