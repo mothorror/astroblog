@@ -13,7 +13,7 @@ const allPosts = (await getCollection('posts')).sort(
 
 // 获取当前页码
 const pageParam = Astro.params.page;
-const currentPage = parseInt(pageParam) || 1;
+const currentPage = parseInt(pageParam || '1') || 1;
 
 // 计算总页数
 const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
