@@ -1,10 +1,9 @@
 ---
-title: 自定义测试
-pubDate: 2020-05-07
-description: 自定义note label及更多引用测试
-tags:
-  - test
-status: published
+title: "自定义测试"
+pubDate: 2020-05-07T16:00:00.000Z
+updatedDate: 2026-05-07T12:07:38.331Z
+description: "自定义note label及更多引用测试"
+tags: ["test"]
 ---
 
 # 一级标题

@@ -1,6 +1,5 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
-import node from '@astrojs/node';
 import remarkDirective from 'remark-directive';
 import { customBlockquotes, customInlineLabels } from './remark-custom-blockquotes.js';
 
@@ -11,10 +10,7 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [remarkDirective, customBlockquotes, customInlineLabels],
   },
-  output: 'server',
-  adapter: node({
-    mode: 'standalone',
-  }),
+  output: 'static',
   site: 'https://blog.xitingit.top',
   devToolbar: {
     enabled: false,

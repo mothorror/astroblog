@@ -1,21 +1,13 @@
 ---
 import NextLayout from '../layouts/NextLayout.astro';
+import { getCollection } from 'astro:content';
 
-// Fetch all posts from API (excludes hidden posts)
-let allPosts = [];
-try {
-  const response = await fetch('http://localhost:3002/api/posts/all');
-  if (response.ok) {
-    const data = await response.json();
-    allPosts = data.posts;
-  }
-} catch (e) {
-  console.warn('Failed to fetch posts from API');
-}
+// Get all posts from content collection
+const allPosts = await getCollection('posts');
 
 // Get all unique tags with post count
 const tagsWithCount = allPosts.reduce((acc, post) => {
-  const postTags = post.tags || [];
+  const postTags = post.data.tags || [];
   postTags.forEach((tag) => {
     if (!acc[tag]) {
       acc[tag] = 0;

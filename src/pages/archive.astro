@@ -1,21 +1,14 @@
 ---
 import NextLayout from '../layouts/NextLayout.astro';
+import { getCollection } from 'astro:content';
 
-// Fetch all posts from API (excludes hidden posts)
-let allPosts = [];
-try {
-  const response = await fetch('http://localhost:3002/api/posts/all');
-  if (response.ok) {
-    const data = await response.json();
-    allPosts = data.posts;
-  }
-} catch (e) {
-  console.warn('Failed to fetch posts from API');
-}
+// Get all posts from content collection
+const allPosts = (await getCollection('posts'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 // Group posts by year and month
 const groupedPosts = allPosts.reduce((acc, post) => {
-  const date = new Date(post.pubDate);
+  const date = post.data.pubDate;
   const year = date.getFullYear();
   const month = date.toLocaleDateString('zh-CN', { month: 'long' });
 
@@ -60,11 +53,11 @@ const groupedPosts = allPosts.reduce((acc, post) => {
                         <ul class="month-posts">
                           {posts.map((post) => (
                             <li class="post-item">
-                              <a href={`/blog/${post.slug}/`} class="post-link">
+                              <a href={`/blog/${post.id.replace('.md', '')}/`} class="post-link">
                                 <span class="post-date">
-                                  {new Date(post.pubDate).getDate()}日
+                                  {post.data.pubDate.getDate()}日
                                 </span>
-                                <span class="post-title">{post.title}</span>
+                                <span class="post-title">{post.data.title}</span>
                               </a>
                             </li>
                           ))}

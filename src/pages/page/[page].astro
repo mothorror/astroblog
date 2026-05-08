@@ -3,8 +3,8 @@ import NextLayout from '../../layouts/NextLayout.astro';
 import PostCardNext from '../../components/PostCardNext.astro';
 import { getCollection } from 'astro:content';
 
-// 每页显示的文章数
-const POSTS_PER_PAGE = 4;
+// 每页显示的文章数（与首页保持一致）
+const POSTS_PER_PAGE = 10;
 
 // 获取所有文章并按发布时间排序
 const allPosts = (await getCollection('posts')).sort(

@@ -1,17 +1,8 @@
 ---
 import NextLayout from '../layouts/NextLayout.astro';
 
-// Fetch all categories from API
-let categoriesData = [];
-try {
-  const response = await fetch('http://localhost:3002/api/categories');
-  if (response.ok) {
-    const data = await response.json();
-    categoriesData = data.categories || [];
-  }
-} catch (e) {
-  console.warn('Failed to fetch categories from API');
-}
+// 当前未使用分类功能，仅使用标签
+const categoriesData = [];
 ---
 
 <NextLayout title="分类">
@@ -21,7 +12,7 @@ try {
 
       {categoriesData.length === 0 ? (
         <div class="categories-empty">
-          <p>还没有分类</p>
+          <p>暂未启用分类功能，请使用标签浏览文章</p>
         </div>
       ) : (
         <div class="categories-list">

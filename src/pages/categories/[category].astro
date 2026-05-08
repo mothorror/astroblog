@@ -3,42 +3,22 @@ import NextLayout from '../../layouts/NextLayout.astro';
 
 const { category } = Astro.params;
 
-// Fetch category posts from API
-interface CategoryData {
-  category: { id: string; name: string; slug: string; description?: string } | null;
-  posts: Array<{
-    id: string;
-    title: string;
-    slug: string;
-    excerpt?: string;
-    pubDate: Date;
-  }>;
-}
-
-let categoryData: CategoryData = { category: null, posts: [] };
-try {
-  const response = await fetch(`http://localhost:3002/api/categories/${category}/posts`);
-  if (response.ok) {
-    const data = await response.json();
-    categoryData = data;
-  }
-} catch (e) {
-  console.warn('Failed to fetch category posts from API');
-}
-
-const { category: categoryInfo, posts: categoryPosts } = categoryData;
+// 当前未使用分类功能
+const categoryInfo = null;
+const categoryPosts: any[] = [];
 ---
 
-<NextLayout title={`分类: ${categoryInfo?.name || category}`}>
+<NextLayout title={`分类: ${category}`}>
   <div class="category-page">
     <div class="category-inner">
       <h1 class="category-title">
-        <i class="fa-solid fa-layer-group"></i> {categoryInfo?.name || category}
+        <i class="fa-solid fa-layer-group"></i> {category}
       </h1>
 
       {categoryPosts.length === 0 ? (
         <div class="category-empty">
-          <p>该分类下没有文章</p>
+          <p>暂未启用分类功能，请使用标签浏览文章</p>
+          <a href="/" style="color: #222; text-decoration: underline;">返回首页</a>
         </div>
       ) : (
         <div class="category-posts">

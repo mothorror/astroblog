@@ -293,7 +293,15 @@ const menuItems = [
 
     searchBtn?.addEventListener('click', function(e) {
       e.preventDefault();
+      // 显示搜索提示
+      alert('搜索功能暂时不可用\n您可以使用浏览器内置搜索（Ctrl+F 或 Cmd+F）');
+      // 或者直接打开弹窗显示提示
       searchPopup?.classList.toggle('local-search-popup-show');
+      // 添加提示信息
+      const resultDiv = document.getElementById('local-search-result');
+      if (resultDiv) {
+        resultDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">搜索功能暂时不可用</div>';
+      }
     });
 
     closeBtn?.addEventListener('click', function() {

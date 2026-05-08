@@ -1,108 +1,64 @@
 ---
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import remarkRehype from 'remark-rehype';
-import rehypeStringify from 'rehype-stringify';
-import remarkDirective from 'remark-directive';
-import { customBlockquotes, customInlineLabels } from '../../../remark-custom-blockquotes.js';
+import { getCollection, getEntry, render } from 'astro:content';
 import NextLayout from '../../layouts/NextLayout.astro';
 import Giscus from '../../components/Giscus.astro';
-import Database from 'better-sqlite3';
 
 // Get slug from URL params
 const slug = Astro.params.slug;
 
-// Get post from database (use absolute path)
-const dbPath = '/root/astroblog/data/blog.db';
-const db = new Database(dbPath);
+// Get post from content collection
+const postEntry = await getEntry('posts', `${slug}.md`);
 
-// Query the database for the post
-const row = db.prepare('SELECT * FROM posts WHERE slug = ? AND status = ?').get(slug, 'published');
-
-if (!row) {
+if (!postEntry) {
   return new Response('Post not found', {
     status: 404,
     statusText: 'Not Found'
   });
 }
 
-// Parse post data
-const post = {
-  id: row.id,
-  title: row.title,
-  slug: row.slug,
-  content: row.content,
-  excerpt: row.excerpt,
-  pubDate: new Date(row.pub_date),
-  updatedDate: row.updated_date ? new Date(row.updated_date) : null,
-  tags: row.tags ? JSON.parse(row.tags) : [],
-  backgroundImage: row.background_image,
-};
-
-db.close();
-
-// Process markdown with custom blockquotes using unified/remark
-const processor = unified()
-  .use(remarkParse)
-  .use(remarkDirective)
-  .use(customBlockquotes)
-  .use(remarkRehype, { allowDangerousHtml: true })
-  .use(rehypeStringify, { allowDangerousHtml: true });
-
-let htmlContent = await processor.process(post.content);
-
-// Apply custom label syntax via string replacement (simple and reliable)
-htmlContent = String(htmlContent)
-  .replace(/\[!labelgreen\]@([^@]+)@/g, '<span class="labelgreen">$1</span>')
-  .replace(/\[!labelred\]@([^@]+)@/g, '<span class="labelred">$1</span>')
-  .replace(/\[!labelblue\]@([^@]+)@/g, '<span class="labelblue">$1</span>')
-  .replace(/\[!labelyellow\]@([^@]+)@/g, '<span class="labelyellow">$1</span>')
-  .replace(/\[!labelgrey\]@([^@]+)@/g, '<span class="labelgrey">$1</span>')
-  .replace(/\[!labelpink\]@([^@]+)@/g, '<span class="labelpink">$1</span>')
-  .replace(/\[!labelorange\]@([^@]+)@/g, '<span class="labelorange">$1</span>');
+const { data } = postEntry;
+const { Content } = await render(postEntry);
 
 // Format dates
-const formattedDate = post.pubDate.toLocaleDateString('zh-CN', {
+const formattedDate = data.pubDate.toLocaleDateString('zh-CN', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
 });
 
-const formattedUpdatedDate = post.updatedDate
-  ? post.updatedDate.toLocaleDateString('zh-CN', {
+const formattedUpdatedDate = data.updatedDate
+  ? data.updatedDate.toLocaleDateString('zh-CN', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     })
   : null;
 
-// Get post ID for comments
-const postId = post.slug;
-
-// Get raw content for word count
-const rawContent = post.content?.trim() || '';
-const wordCount = rawContent.length;
-
-// Get all posts for navigation
-const db2 = new Database('/root/astroblog/data/blog.db');
-const allPosts = db2.prepare('SELECT * FROM posts WHERE status = ? ORDER BY pub_date DESC').all('published');
-db2.close();
+// Get all posts for navigation (sorted by date)
+const allPosts = await getCollection('posts');
+const sortedPosts = allPosts.sort((a, b) =>
+  b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
 
 // Find current post index
-const currentIndex = allPosts.findIndex((p) => p.slug === post.slug);
+const currentIndex = sortedPosts.findIndex((p) => p.id === `${slug}.md`);
 
 // Get previous and next posts
-const prevPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
-const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
+const prevPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
+const nextPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
+
+// Get raw content for word count
+const rawContent = postEntry?.body?.trim() || '';
+const wordCount = rawContent.length;
 ---
 
-<NextLayout title={post.title} description={post.excerpt || post.title}>
+<NextLayout title={data.title} description={data.description || data.title}>
   <div class="posts-expand">
     <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
       <div class="post-block">
         <header class="post-header">
           <h1 class="post-title" itemprop="name headline">
-            {post.title}
+            {data.title}
           </h1>
 
           <div class="post-meta">
@@ -149,18 +105,18 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
             </div>
 
             <!-- 第三行：标签 -->
-            {post.tags && post.tags.length > 0 && (
+            {data.tags && data.tags.length > 0 && (
               <div class="post-meta-row">
                 <span class="post-tags-inline">
                   <span class="post-meta-item-icon">
                     <i class="fa-solid fa-layer-group"></i>
                   </span>
-                  {post.tags?.map((tag, index) => (
+                  {data.tags?.map((tag: string, index: number) => (
                     <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                       <a href={`/tags/${tag}`} itemprop="url" rel="index">
                         <span itemprop="name">{tag}</span>
                       </a>
-                      {index < (post.tags?.length || 0) - 1 && ', '}
+                      {index < (data.tags?.length || 0) - 1 && ', '}
                     </span>
                   ))}
                 </span>
@@ -169,16 +125,18 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
           </div>
         </header>
 
-        {post.backgroundImage && (
-          <div class="post-background" style={`background-image: url('${post.backgroundImage}')`}></div>
+        {data.backgroundImage && (
+          <div class="post-background" style={`background-image: url('${data.backgroundImage}')`}></div>
         )}
 
-        <div class="post-body" itemprop="articleBody" set:html={htmlContent.toString()} />
+        <div class="post-body" itemprop="articleBody">
+          <Content />
+        </div>
 
         <!-- Tags Section -->
-        {post.tags && post.tags.length > 0 && (
+        {data.tags && data.tags.length > 0 && (
           <div class="post-tags">
-            {post.tags.map((tag) => (
+            {data.tags.map((tag: string) => (
               <a href={`/tags/${tag}`} class="tag-item">
                 <i class="fa-solid fa-tag"></i>
                 {tag}
@@ -190,9 +148,9 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
         <!-- Navigation Section -->
         <div class="post-navigation">
           {prevPost && (
-            <a class="nav-btn prev-btn" href={`/blog/${prevPost.slug}`}>
+            <a class="nav-btn prev-btn" href={`/blog/${prevPost.id.replace('.md', '')}`}>
               <span class="nav-label">上一篇</span>
-              <span class="nav-title">{prevPost.title}</span>
+              <span class="nav-title">{prevPost.data.title}</span>
             </a>
           )}
 
@@ -201,9 +159,9 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
           </a>
 
           {nextPost && (
-            <a class="nav-btn next-btn" href={`/blog/${nextPost.slug}`}>
+            <a class="nav-btn next-btn" href={`/blog/${nextPost.id.replace('.md', '')}`}>
               <span class="nav-label">下一篇</span>
-              <span class="nav-title">{nextPost.title}</span>
+              <span class="nav-title">{nextPost.data.title}</span>
             </a>
           )}
         </div>
@@ -335,7 +293,6 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
   .post-body {
     animation: slideDownIn 0.5s ease 0.1s both;
     margin-top: 20px;
-    /* Vditor styles - 字体保持原有设置，不改动 */
     color: #24292e;
     word-wrap: break-word;
     overflow: auto;
@@ -344,7 +301,7 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
     word-break: break-word;
   }
 
-  /* Vditor list styles - 移除字体设置 */
+  /* List styles */
   .post-body :global(ul ul ul) {
     list-style-type: square;
   }
@@ -364,7 +321,7 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
     margin-top: 0.25em;
   }
 
-  /* Vditor heading styles - 移除字体设置 */
+  /* Heading styles */
   .post-body :global(h1),
   .post-body :global(h2),
   .post-body :global(h3),
@@ -395,7 +352,7 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
     font-size: 1em;
   }
 
-  /* Vditor hr styles */
+  /* HR styles */
   .post-body :global(hr) {
     height: 2px;
     padding: 0;
@@ -404,13 +361,13 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
     border: 0;
   }
 
-  /* Vditor paragraph styles */
+  /* Paragraph styles */
   .post-body :global(p) {
     margin-top: 0;
     margin-bottom: 16px;
   }
 
-  /* Vditor default blockquote styles */
+  /* Default blockquote styles */
   .post-body :global(blockquote):not(.note):not(.primary):not(.success):not(.info):not(.warning):not(.danger):not(.flat) {
     padding: 0 1em;
     color: #6a737d;
@@ -424,7 +381,7 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
     margin-bottom: 0;
   }
 
-  /* Vditor table styles */
+  /* Table styles */
   .post-body :global(table) {
     border-collapse: collapse;
     empty-cells: show;
@@ -453,7 +410,7 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
     background-color: #fff;
   }
 
-  /* Vditor inline code styles - 移除字体设置 */
+  /* Inline code styles */
   .post-body :global(code:not(.hljs):not(.highlight-chroma)) {
     padding: 0.2em 0.4em;
     margin: 0;
@@ -465,7 +422,7 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
     background-color: rgba(27, 31, 35, 0.05);
   }
 
-  /* Vditor code block styles - 移除字体设置 */
+  /* Code block styles */
   .post-body :global(pre) {
     margin: 1em 0;
   }
@@ -531,7 +488,7 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
     margin-bottom: 0 !important;
   }
 
-  /* Custom label tag styles - 高亮效果（荧光笔）*/
+  /* Custom label tag styles */
   .post-body :global(span.labelgreen),
   .post-body :global(span.labelred),
   .post-body :global(span.labelblue),
@@ -599,7 +556,6 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
     border-radius: 4px;
     color: #333;
   }
-
 
   .post-body :global(blockquote.flat) {
     margin: 1em 0;
@@ -692,11 +648,11 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
     max-width: 200px;
   }
 
-  /* 评论区块样式 - 与文章卡片一致 */
+  /* Comment section styles */
   .comment-section {
-    margin-top: 64px !important; /* 与上方文章流的间距 - 容器边界之间 */
-    padding-top: 0 !important; /* 覆盖默认的 padding-top: 40px */
-    padding-bottom: 0 !important; /* 覆盖默认的 padding-bottom: 40px */
+    margin-top: 64px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
   }
 
   .comment-block {
@@ -706,16 +662,14 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     opacity: 0;
     animation: fadeIn 0.5s ease forwards;
-    margin: 0 !important; /* 移除任何可能的 margin */
+    margin: 0 !important;
   }
 
-  /* 强制重置 Giscus 组件的间距 */
   :global(.giscus-frame) {
     margin: 0 !important;
     padding: 0 !important;
   }
 
-  /* 强制重置 Giscus 容器的间距 */
   :global(.giscus-container) {
     margin: 0 !important;
     padding: 0 !important;
