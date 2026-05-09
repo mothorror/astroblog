@@ -35,3 +35,9 @@ Thumbs.db
 
 # PM2
 .pm2/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
