@@ -5,7 +5,12 @@
     "jsxImportSource": "react",
     "baseUrl": ".",
     "paths": {
-      "astro/loaders": ["./node_modules/astro/dist/content/loaders/index.js"]
+      "astro/loaders": [
+        "./node_modules/astro/dist/content/loaders/index.js"
+      ]
     }
-  }
+  },
+  "include": [
+    "./worker-configuration.d.ts"
+  ]
 }
