@@ -3,46 +3,69 @@ import { getCollection, render } from 'astro:content';
 import NextLayout from '../../layouts/NextLayout.astro';
 import Giscus from '../../components/Giscus.astro';
 
-// Generate static paths for all posts
+// Generate static paths for all published posts
 export async function getStaticPaths() {
-  const posts = await getCollection('posts');
-  return posts.map((post) => ({
-    params: { slug: post.id.replace('.md', '') },
-    props: { post },
-  }));
+  try {
+    const posts = await getCollection('posts');
+    const publishedPosts = posts.filter(post => post.data.status !== 'draft');
+
+    return publishedPosts.map((post) => ({
+      params: { slug: post.id.replace('.md', '') },
+      props: { post },
+    }));
+  } catch (error) {
+    console.error('Error generating static paths:', error);
+    return [];
+  }
 }
 
-// Get post from props
+// Get post from props with error handling
 const { post } = Astro.props;
+
+if (!post) {
+  return new Response('Post not found', {
+    status: 404,
+    statusText: 'Not Found'
+  });
+}
+
 const { data } = post;
 const { Content } = await render(post);
 
-// Format dates
-const formattedDate = data.pubDate.toLocaleDateString('zh-CN', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+// Safe date formatting
+const formatDate = (date: Date, format: 'long' | 'short' = 'long') => {
+  try {
+    const options = format === 'long'
+      ? { year: 'numeric' as const, month: 'long' as const, day: 'numeric' as const }
+      : { year: 'numeric' as const, month: '2-digit' as const, day: '2-digit' as const };
+    return date.toLocaleDateString('zh-CN', options);
+  } catch {
+    return date.toISOString();
+  }
+};
 
-const formattedUpdatedDate = data.updatedDate
-  ? data.updatedDate.toLocaleDateString('zh-CN', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  : null;
+const formattedDate = formatDate(data.pubDate);
+const formattedUpdatedDate = data.updatedDate ? formatDate(data.updatedDate) : null;
 
 // Get all posts for navigation (sorted by date)
-const allPosts = await getCollection('posts');
-const sortedPosts = allPosts.sort((a, b) =>
-  b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+let sortedPosts: any[] = [];
+try {
+  const allPosts = await getCollection('posts');
+  sortedPosts = allPosts
+    .filter(p => p.data.status !== 'draft')
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+} catch (error) {
+  console.error('Error fetching posts for navigation:', error);
+  sortedPosts = [];
+}
 
-// Find current post index
+// Find current post index safely
 const currentIndex = sortedPosts.findIndex((p) => p.id === post.id);
 
 // Get previous and next posts
-const prevPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
+const prevPost = currentIndex >= 0 && currentIndex < sortedPosts.length - 1
+  ? sortedPosts[currentIndex + 1]
+  : null;
 const nextPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
 
 // Get raw content for word count

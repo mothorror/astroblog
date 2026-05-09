@@ -2,7 +2,8 @@
 title: '欢迎来到我的博客'
 pubDate: 2026-05-07T16:00:00.000Z
 description: '这是第一篇文章，介绍了博客的基本功能和特点。'
-tags: ['公告', '测试']
+category: '公告'
+tags: ['测试']
 status: published
 ---
 

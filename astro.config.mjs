@@ -9,9 +9,12 @@ export default defineConfig({
   ],
   markdown: {
     remarkPlugins: [remarkDirective, customBlockquotes, customInlineLabels],
+    syntaxHighlight: 'shiki', // 使用更快的语法高亮
+    gfm: true, // 支持 GitHub Flavored Markdown
+    smartypants: true, // 智能标点符号
   },
   output: 'static',
-  site: 'https://blog.xitingit.top',
+  site: 'https://blog.xiting3.xyz',
   devToolbar: {
     enabled: false,
   },
@@ -24,5 +27,11 @@ export default defineConfig({
         '@': './src',
       },
     },
+  },
+  build: {
+    format: 'directory', // 使用目录格式，URL 更清晰
+  },
+  experimental: {
+    clientPrerender: true, // 启用客户端预渲染
   },
 });

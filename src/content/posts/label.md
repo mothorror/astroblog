@@ -2,8 +2,9 @@
 title: "专项测试label"
 pubDate: 2026-05-08T00:26:08.384Z
 updatedDate: 2026-05-08T00:26:08.384Z
-description: ""
-tags: []
+description: "专项测试label高亮效果"
+tags: ["测试"]
+category: "技术教程"
 ---
 
 [!labelorange]@橘色高亮@

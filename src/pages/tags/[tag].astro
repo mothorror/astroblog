@@ -3,23 +3,44 @@ import NextLayout from '../../layouts/NextLayout.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
-  const allPosts = await getCollection('posts');
-  const tags = new Set<string>();
+  try {
+    const allPosts = await getCollection('posts');
+    const tags = new Set<string>();
 
-  allPosts.forEach((post) => {
-    (post.data.tags || []).forEach((tag) => tags.add(tag));
-  });
+    allPosts.forEach((post) => {
+      if (post.data.status !== 'draft') {
+        (post.data.tags || []).forEach((tag) => tags.add(tag));
+      }
+    });
 
-  return Array.from(tags).map((tag) => ({
-    params: { tag },
-  }));
+    return Array.from(tags).map((tag) => ({
+      params: { tag },
+    }));
+  } catch (error) {
+    console.error('Error generating tag paths:', error);
+    return [];
+  }
 }
 
 const { tag } = Astro.params;
-const allPosts = await getCollection('posts');
-const tagPosts = allPosts.filter((post) =>
-  (post.data.tags || []).includes(tag)
-).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Safe decode tag name
+const decodedTag = decodeURIComponent(tag);
+
+// Get posts for this tag
+let tagPosts: any[] = [];
+try {
+  const allPosts = await getCollection('posts');
+  tagPosts = allPosts
+    .filter(post =>
+      post.data.status !== 'draft' &&
+      (post.data.tags || []).map(t => decodeURIComponent(t)).includes(decodedTag)
+    )
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+} catch (error) {
+  console.error(`Error fetching posts for tag "${tag}":`, error);
+  tagPosts = [];
+}
 ---
 
 <NextLayout title={`标签: ${tag}`}>
