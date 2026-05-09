@@ -1,16 +1,27 @@
 ---
 import NextLayout from '../../layouts/NextLayout.astro';
+import { getCollection } from 'astro:content';
 
-export function getStaticPaths() {
-  // 当前未使用分类功能，返回空数组
-  return [];
+export async function getStaticPaths() {
+  const allPosts = await getCollection('posts');
+  const categories = new Set<string>();
+
+  allPosts.forEach((post) => {
+    if (post.data.category) {
+      categories.add(post.data.category);
+    }
+  });
+
+  return Array.from(categories).map((category) => ({
+    params: { category },
+  }));
 }
 
 const { category } = Astro.params;
-
-// 当前未使用分类功能
-const categoryInfo = null;
-const categoryPosts: any[] = [];
+const allPosts = await getCollection('posts');
+const categoryPosts = allPosts
+  .filter((post) => post.data.category === category)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
 <NextLayout title={`分类: ${category}`}>
@@ -22,18 +33,18 @@ const categoryPosts: any[] = [];
 
       {categoryPosts.length === 0 ? (
         <div class="category-empty">
-          <p>暂未启用分类功能，请使用标签浏览文章</p>
+          <p>该分类下暂无文章</p>
           <a href="/" style="color: #222; text-decoration: underline;">返回首页</a>
         </div>
       ) : (
         <div class="category-posts">
           {categoryPosts.map((post) => (
             <article class="post-item">
-              <a href={`/blog/${post.slug}/`} class="post-link">
+              <a href={`/blog/${post.id.replace('.md', '')}/`} class="post-link">
                 <span class="post-date">
-                  {new Date(post.pubDate).toLocaleDateString('zh-CN')}
+                  {new Date(post.data.pubDate).toLocaleDateString('zh-CN')}
                 </span>
-                <span class="post-title">{post.title}</span>
+                <span class="post-title">{post.data.title}</span>
               </a>
             </article>
           ))}

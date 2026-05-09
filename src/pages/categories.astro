@@ -1,12 +1,24 @@
 ---
 import NextLayout from '../layouts/NextLayout.astro';
+import { getCollection } from 'astro:content';
 
-// 当前未使用分类功能，仅使用标签
-const categoriesData: Array<{
-  slug: string;
-  name: string;
-  post_count?: number;
-}> = [];
+// 获取所有文章并提取分类
+const allPosts = await getCollection('posts');
+const categoryMap = new Map<string, number>();
+
+allPosts.forEach((post) => {
+  if (post.data.category) {
+    const count = categoryMap.get(post.data.category) || 0;
+    categoryMap.set(post.data.category, count + 1);
+  }
+});
+
+// 转换为数组格式
+const categoriesData = Array.from(categoryMap.entries()).map(([name, post_count]) => ({
+  slug: name,
+  name,
+  post_count,
+})).sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
 ---
 
 <NextLayout title="分类">
@@ -16,12 +28,12 @@ const categoriesData: Array<{
 
       {categoriesData.length === 0 ? (
         <div class="categories-empty">
-          <p>暂未启用分类功能，请使用标签浏览文章</p>
+          <p>暂无分类</p>
         </div>
       ) : (
         <div class="categories-list">
           {categoriesData.map((category) => (
-            <a href={`/categories/${category.slug}/`} class="category-item">
+            <a href={`/categories/${category.slug}`} class="category-item">
               <span class="category-name">{category.name}</span>
               <span class="category-count">{category.post_count || 0}</span>
             </a>

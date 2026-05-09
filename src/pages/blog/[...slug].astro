@@ -102,12 +102,28 @@ const wordCount = rawContent.length;
               </span>
             </div>
 
-            <!-- 第三行：标签 -->
+            <!-- 第三行：分类 -->
+            {data.category && (
+              <div class="post-meta-row">
+                <span class="post-category-inline">
+                  <span class="post-meta-item-icon">
+                    <i class="fa-solid fa-folder"></i>
+                  </span>
+                  <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                    <a href={`/categories/${data.category}`} itemprop="url" rel="index">
+                      <span itemprop="name">{data.category}</span>
+                    </a>
+                  </span>
+                </span>
+              </div>
+            )}
+
+            <!-- 第四行：标签 -->
             {data.tags && data.tags.length > 0 && (
               <div class="post-meta-row">
                 <span class="post-tags-inline">
                   <span class="post-meta-item-icon">
-                    <i class="fa-solid fa-layer-group"></i>
+                    <i class="fa-solid fa-tags"></i>
                   </span>
                   {data.tags?.map((tag: string, index: number) => (
                     <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
