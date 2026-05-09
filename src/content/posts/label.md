@@ -7,17 +7,6 @@ tags: ["测试"]
 category: "技术教程"
 ---
 
-[!labelorange]@橘色高亮@
+标签颜色测试：[!labelorange]@橘色高亮@ [!labelblue]@蓝色高亮@ [!labelgrey]@灰色高亮@ [!labelpink]@粉色高亮@ [!labelyellow]@黄色高亮@ [!labelgreen]@绿色高亮@
 
-[!labelred]@红色高亮@
-
-[!labelblue]@蓝色高亮@
-
-[!labelgrey]@灰色高亮@
-
-[!labelpink]@粉色高亮@
-
-[!labelyellow]@黄色高亮@
-
-[!labelgreen]@绿色高亮@
-
+更多测试：这是[!labelblue]@蓝色标签@和[!labelgreen]@绿色标签@的组合。

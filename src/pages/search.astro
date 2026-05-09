@@ -42,8 +42,14 @@ const searchIndexJSON = JSON.stringify(searchIndex);
   </div>
 
   <!-- 搜索索引数据 -->
-  <script is:inline define:vars={{ searchIndex }}>
-    window.SEARCH_INDEX = {searchIndex};
+  <div id="search-index-data" style="display:none;" data-json={searchIndexJSON}></div>
+  <script is:inline>
+    (function() {
+      const dataEl = document.getElementById('search-index-data');
+      if (dataEl) {
+        window.SEARCH_INDEX = JSON.parse(dataEl.getAttribute('data-json'));
+      }
+    })();
   </script>
 </NextLayout>
 
@@ -158,8 +164,8 @@ const searchIndexJSON = JSON.stringify(searchIndex);
     border-radius: 8px;
     transition: all 0.3s;
     cursor: pointer;
-    text-decoration: none;
-    color: inherit;
+    text-decoration: none !important;
+    color: inherit !important;
     display: block;
   }
 
@@ -168,16 +174,20 @@ const searchIndexJSON = JSON.stringify(searchIndex);
     transform: translateX(5px);
   }
 
+  .search-result-item * {
+    text-decoration: none !important;
+  }
+
   .search-result-title {
     font-size: 18px;
     font-weight: 600;
-    color: #222;
+    color: #000 !important;
     margin-bottom: 8px;
   }
 
   .search-result-meta {
     font-size: 13px;
-    color: #999;
+    color: #666 !important;
     margin-bottom: 10px;
   }
 
@@ -185,9 +195,14 @@ const searchIndexJSON = JSON.stringify(searchIndex);
     margin-right: 15px;
   }
 
+  .search-result-meta a {
+    color: #666 !important;
+    text-decoration: none !important;
+  }
+
   .search-result-description {
     font-size: 14px;
-    color: #666;
+    color: #333 !important;
     line-height: 1.6;
   }
 
@@ -361,14 +376,14 @@ const searchIndexJSON = JSON.stringify(searchIndex);
         const date = new Date(doc.date).toLocaleDateString('zh-CN');
 
         return `
-          <a href="${doc.url}" class="search-result-item">
-            <div class="search-result-title">${highlightKeywords(doc.title, keywords)}</div>
-            <div class="search-result-meta">
-              <span><i class="fa-regular fa-calendar"></i> ${date}</span>
-              ${doc.category ? `<span><i class="fa-solid fa-folder"></i> ${doc.category}</span>` : ''}
-              ${doc.tags && doc.tags.length > 0 ? `<span><i class="fa-solid fa-tags"></i> ${doc.tags.join(', ')}</span>` : ''}
+          <a href="${doc.url}" class="search-result-item" style="display:block; padding:20px; margin-bottom:15px; background:#f9f9f9; border-radius:8px; transition:all 0.3s; cursor:pointer; text-decoration:none; color:inherit;">
+            <div class="search-result-title" style="font-size:18px; font-weight:600; color:#000; margin-bottom:8px;">${highlightKeywords(doc.title, keywords)}</div>
+            <div class="search-result-meta" style="font-size:13px; color:#666; margin-bottom:10px;">
+              <span style="margin-right:15px;"><i class="fa-regular fa-calendar"></i> ${date}</span>
+              ${doc.category ? `<span style="margin-right:15px;"><i class="fa-solid fa-folder"></i> ${doc.category}</span>` : ''}
+              ${doc.tags && doc.tags.length > 0 ? `<span style="margin-right:15px;"><i class="fa-solid fa-tags"></i> ${doc.tags.join(', ')}</span>` : ''}
             </div>
-            <div class="search-result-description">${highlightKeywords(doc.description, keywords)}</div>
+            <div class="search-result-description" style="font-size:14px; color:#333; line-height:1.6;">${highlightKeywords(doc.description, keywords)}</div>
           </a>
         `;
       }).join('');

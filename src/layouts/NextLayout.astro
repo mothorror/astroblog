@@ -154,6 +154,15 @@ const { title = "Xiting's Blog", description = '黑果小兵,daliansky,blog.dali
     <script is:inline src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
     <script is:inline src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
     <script is:inline src="https://fastly.jsdelivr.net/npm/@fancyapps/fancybox@3.2.5/dist/jquery.fancybox.min.js"></script>
+    <!-- 初始化 NexT 和 CONFIG 全局对象 -->
+    <script is:inline>
+      window.NexT = window.NexT || {};
+      window.NexT.utils = {};
+      window.CONFIG = {
+        scheme: 'Muse',
+        sidebar: 'always'
+      };
+    </script>
     <script is:inline src="/js/utils.js?v=6.6.0"></script>
     <script is:inline src="/js/motion.js?v=6.6.0"></script>
     <script is:inline src="/js/bootstrap.js?v=6.6.0"></script>
@@ -270,14 +279,6 @@ const { title = "Xiting's Blog", description = '黑果小兵,daliansky,blog.dali
 
   #scrollpercent {
     font-size: 12px;
-  }
-
-  /* 响应式 */
-  @media (max-width: 768px) {
-    .page-background {
-      max-height: 400px;
-      width: 80%;
-    }
   }
 
   /* Code styling - reset first */

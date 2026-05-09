@@ -170,23 +170,28 @@ const menuItems = [
       position: absolute;
       top: 15px;
       right: 20px;
-      z-index: 1000;
+      z-index: 9999;
     }
 
     .site-nav-toggle button {
-      background: transparent;
+      background: #000 !important;
       border: none;
-      padding: 10px;
-      cursor: pointer;
+      border-radius: 0 !important;
+      padding: 0;
+      cursor: move;
       display: flex;
       flex-direction: column;
       gap: 5px;
+      width: 40px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn-bar {
-      width: 24px;
+      width: 20px;
       height: 2px;
-      background: #333;
+      background: #fff !important;
       transition: all 0.3s ease;
     }
 
@@ -203,64 +208,70 @@ const menuItems = [
     }
 
     .site-nav {
-      position: fixed;
-      top: 0;
-      right: -100%;
-      width: 70%;
-      height: 100vh;
-      background: #e8e8e8;
-      transition: right 0.3s ease;
-      z-index: 999;
-      overflow-y: auto;
-      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .site-nav.active {
-      right: 0;
+      position: static !important;
+      width: 100%;
+      height: auto;
+      background: #fff !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+      border-top: 1px solid #ddd !important;
+      display: block !important;
     }
 
     .site-nav .menu {
       flex-direction: column;
-      padding: 80px 0 20px;
+      padding: 0;
+      max-height: 0 !important;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .site-nav.active .menu {
+      max-height: 1000px !important;
+      padding: 10px 0 !important;
+      display: flex !important;
     }
 
     .site-nav .menu-item {
       width: 100%;
-      text-align: left;
+      text-align: center;
+      border-bottom: 1px solid #f0f0f0;
     }
 
     .site-nav .menu-item a {
       width: 100%;
-      padding: 15px 20px;
+      padding: 15px 10px;
       border-radius: 0;
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .site-nav .menu-item a:hover {
+      background: #f5f5f5;
+    }
+
+    .site-nav-toggle button {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 8px 12px;
+    }
+
+    .site-nav-toggle.active .btn-bar {
+      background: #333;
     }
   }
 
-  /* 遮罩层 */
+  /* 遮罩层 - 已禁用 */
   .site-nav-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 998;
-  }
-
-  .site-nav-overlay.active {
-    display: block;
-  }
-
-  @media (max-width: 767px) {
-    .site-nav-overlay.active {
-      display: block;
-    }
+    display: none !important;
   }
 </style>
 
 <div class="site-nav-overlay" id="siteNavOverlay"></div>
-
 <script is:inline>
   // Search popup functionality
   document.addEventListener('DOMContentLoaded', function() {
@@ -269,16 +280,8 @@ const menuItems = [
     const closeBtn = document.querySelector('.popup-btn-close');
 
     searchBtn?.addEventListener('click', function(e) {
-      e.preventDefault();
-      // 显示搜索提示
-      alert('搜索功能暂时不可用\n您可以使用浏览器内置搜索（Ctrl+F 或 Cmd+F）');
-      // 或者直接打开弹窗显示提示
-      searchPopup?.classList.toggle('local-search-popup-show');
-      // 添加提示信息
-      const resultDiv = document.getElementById('local-search-result');
-      if (resultDiv) {
-        resultDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">搜索功能暂时不可用</div>';
-      }
+      // 允许默认跳转到搜索页面
+      // 不阻止默认行为，让链接正常工作
     });
 
     closeBtn?.addEventListener('click', function() {
@@ -301,23 +304,79 @@ const menuItems = [
     // Mobile navigation toggle
     const navToggle = document.querySelector('.site-nav-toggle button');
     const siteNav = document.querySelector('.site-nav');
-    const navOverlay = document.getElementById('siteNavOverlay');
+
+    console.log('[Nav] navToggle:', navToggle, 'siteNav:', siteNav);
 
     function toggleNav() {
-      navToggle?.classList.toggle('active');
-      siteNav?.classList.toggle('active');
-      navOverlay?.classList.toggle('active');
-      document.body.style.overflow = siteNav?.classList.contains('active') ? 'hidden' : '';
+      console.log('[Nav] Toggle clicked');
+      if (navToggle) navToggle.classList.toggle('active');
+      if (siteNav) siteNav.classList.toggle('active');
+      console.log('[Nav] navToggle.active:', navToggle?.classList.contains('active'));
+      console.log('[Nav] siteNav.active:', siteNav?.classList.contains('active'));
     }
 
-    navToggle?.addEventListener('click', toggleNav);
-    navOverlay?.addEventListener('click', toggleNav);
+    if (navToggle) {
+      navToggle.addEventListener('click', function(e) {
+        // 如果正在拖动，不触发点击事件
+        if (navToggle.classList.contains('dragging')) {
+          return;
+        }
+        console.log('[Nav] Button clicked');
+        toggleNav();
+      });
+    }
+
+    // 拖动功能
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    if (navToggle) {
+      navToggle.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+
+        const rect = navToggle.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+
+        navToggle.classList.add('dragging');
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', function(e) {
+        if (!isDragging || !navToggle) return;
+
+        const x = e.clientX - offsetX;
+        const y = e.clientY - offsetY;
+
+        // 限制在屏幕范围内
+        const maxX = window.innerWidth - 40;
+        const maxY = window.innerHeight - 40;
+
+        navToggle.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
+        navToggle.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+        navToggle.style.right = 'auto';
+      });
+
+      document.addEventListener('mouseup', function() {
+        if (isDragging && navToggle) {
+          isDragging = false;
+          navToggle.classList.remove('dragging');
+        }
+      });
+    }
 
     // Close nav when clicking on menu items
     const mobileMenuItems = document.querySelectorAll('.site-nav .menu-item a');
-    mobileMenuItems.forEach(item => {
-      item.addEventListener('click', function() {
-        if (window.innerWidth <= 767) {
+    console.log('[Nav] Found menu items:', mobileMenuItems.length);
+    mobileMenuItems.forEach((item, index) => {
+      item.addEventListener('click', function(e) {
+        console.log('[Nav] Menu item clicked:', index);
+        if (window.innerWidth <= 767 && siteNav && siteNav.classList.contains('active')) {
           toggleNav();
         }
       });

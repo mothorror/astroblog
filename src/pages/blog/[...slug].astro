@@ -309,6 +309,7 @@ const wordCount = rawContent.length;
   .post-updated,
   .post-wordcount,
   .post-author,
+  .post-category-inline,
   .post-tags-inline {
     display: inline-flex;
     align-items: center;
@@ -316,6 +317,7 @@ const wordCount = rawContent.length;
   }
 
   .post-author a,
+  .post-category-inline a,
   .post-tags-inline a {
     color: #999;
     text-decoration: none;
@@ -323,6 +325,7 @@ const wordCount = rawContent.length;
   }
 
   .post-author a:hover,
+  .post-category-inline a:hover,
   .post-tags-inline a:hover {
     color: #222;
   }
@@ -534,11 +537,12 @@ const wordCount = rawContent.length;
   .post-body :global(span.labelpink),
   .post-body :global(span.labelorange) {
     display: inline !important;
-    padding: 0 3px !important;
-    border-radius: 6px !important;
-    font-size: inherit !important;
-    margin: 0 !important;
-    line-height: inherit !important;
+    padding: 1px 4px !important;
+    border-radius: 3px !important;
+    font-size: 0.9em !important;
+    margin: 0 1px !important;
+    line-height: 1.4 !important;
+    vertical-align: middle !important;
   }
 
   .post-body :global(span.labelgreen) {

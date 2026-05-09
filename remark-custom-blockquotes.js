@@ -34,7 +34,8 @@ export function customBlockquotes() {
 
 /**
  * Custom remark plugin to convert inline label syntax to spans with classes
- * Syntax: [!label]@content@, [!labelred]@content@, [!labelinfo]@content@
+ * Syntax: [!labelblue]@content@, [!labelgrey]@content@, etc.
+ * Supported colors: blue, grey, pink, yellow, green, orange
  */
 export function customInlineLabels() {
   return (tree) => {
@@ -43,7 +44,7 @@ export function customInlineLabels() {
 
       const parts = [];
       let lastIndex = 0;
-      const regex = /\[!(label|labelred|labelinfo)\]@([^@]+)@/g;
+      const regex = /\[!(labelblue|labelgrey|labelpink|labelyellow|labelgreen|labelorange)\]@([^@]+)@/g;
       let match;
 
       while ((match = regex.exec(node.value)) !== null) {
