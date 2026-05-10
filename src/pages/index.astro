@@ -13,7 +13,7 @@ const allPosts = (await getCollection('blog'))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 // 分页设置
-const POSTS_PER_PAGE = 6;
+const POSTS_PER_PAGE = 5;
 const currentPage = 1;
 const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
 const endIndex = startIndex + POSTS_PER_PAGE;

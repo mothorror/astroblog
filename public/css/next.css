@@ -15,17 +15,16 @@ body {
 
 /* 头部样式 */
 .headband {
-  height: 3px;
-  background: #222;
-  position: relative;
-  z-index: 100;
+  display: none;
 }
 
 .header {
-  background: #222;
+  background: linear-gradient(to right, #000000 0%, #1a1a1a 50%, #333333 100%);
   color: #fff;
   position: relative;
   z-index: 100;
+  margin: 0;
+  overflow: hidden;
 }
 
 .header-inner {
@@ -38,9 +37,9 @@ body {
 
 .site-meta {
   text-align: center;
-  padding: 40px 0 20px;
+  padding: 0 0 4px 0;
   position: relative;
-  z-index: 100;
+  z-index: 10;
 }
 
 .site-title {
@@ -49,15 +48,16 @@ body {
   color: #fff;
   display: inline-block;
   position: relative;
-  z-index: 100;
+  z-index: 10;
+  margin-top: -18px;
 }
 
 .site-subtitle {
-  margin: 5px 0 0;
+  margin: 2px 0 0;
   color: #ccc;
   font-size: 14px;
   position: relative;
-  z-index: 100;
+  z-index: 10;
 }
 
 .logo-line-before,

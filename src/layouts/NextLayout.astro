@@ -491,6 +491,30 @@ const bgConfig = config.background;
   blockquote.primary strong {
     color: inherit;
   }
+
+  /* 点击水波纹效果 */
+  .click-ripple {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 70%);
+    transform: translate(-50%, -50%);
+    animation: ripple-expand 0.6s ease-out forwards;
+    z-index: 99999;
+  }
+
+  @keyframes ripple-expand {
+    0% {
+      width: 0;
+      height: 0;
+      opacity: 1;
+    }
+    100% {
+      width: 18px;
+      height: 18px;
+      opacity: 0;
+    }
+  }
 </style>
 
     <script is:inline>
@@ -661,5 +685,38 @@ const bgConfig = config.background;
             playVideo();
           }
         }
+      });
+    </script>
+
+    <!-- 水波纹和心电图效果 -->
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', function() {
+        // ========== 水波纹点击效果 ==========
+        function createRipple(e) {
+          const ripple = document.createElement('div');
+          ripple.className = 'click-ripple';
+
+          // 获取点击位置
+          const x = e.clientX;
+          const y = e.clientY;
+
+          ripple.style.left = x + 'px';
+          ripple.style.top = y + 'px';
+
+          document.body.appendChild(ripple);
+
+          // 动画结束后移除元素
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        }
+
+        // 监听所有鼠标点击事件（左键和右键）
+        document.addEventListener('mousedown', function(e) {
+          // 只在主点击（左键0或右键2）时触发
+          if (e.button === 0 || e.button === 2) {
+            createRipple(e);
+          }
+        });
       });
     </script>

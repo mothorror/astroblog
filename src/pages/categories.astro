@@ -3,7 +3,7 @@ import NextLayout from '../layouts/NextLayout.astro';
 import { getCollection } from 'astro:content';
 
 // 获取所有文章并提取分类
-const allPosts = await getCollection('posts');
+const allPosts = await getCollection('blog');
 const categoryMap = new Map<string, number>();
 
 allPosts.forEach((post) => {

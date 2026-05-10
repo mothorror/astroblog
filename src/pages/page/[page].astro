@@ -3,12 +3,12 @@ import NextLayout from '../../layouts/NextLayout.astro';
 import PostCardNext from '../../components/PostCardNext.astro';
 import { getCollection } from 'astro:content';
 
-const POSTS_PER_PAGE = 10;
+const POSTS_PER_PAGE = 5;
 
 export async function getStaticPaths() {
   try {
-    const allPosts = await getCollection('posts');
-    const publishedPosts = allPosts.filter(post => post.data.status !== 'draft');
+    const allPosts = await getCollection('blog');
+    const publishedPosts = allPosts.filter(post => post.data.draft !== true);
     const totalPages = Math.ceil(publishedPosts.length / POSTS_PER_PAGE);
 
     // 生成分页路由（从第2页开始，第1页是首页）
@@ -29,9 +29,9 @@ export async function getStaticPaths() {
 // 获取所有文章并按发布时间排序
 let sortedPosts: any[] = [];
 try {
-  const allPosts = await getCollection('posts');
+  const allPosts = await getCollection('blog');
   sortedPosts = allPosts
-    .filter(post => post.data.status !== 'draft')
+    .filter(post => post.data.draft !== true)
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 } catch (error) {
   console.error('Error fetching posts for pagination:', error);
@@ -73,10 +73,14 @@ const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
         <PostCardNext
           title={post.data.title}
           url={`/blog/${post.id.replace('.md', '')}/`}
-          date={new Date(post.data.pubDate).toLocaleDateString('zh-CN')}
+          date={post.data.pubDate.toLocaleDateString('zh-CN')}
+          updatedDate={post.data.updatedDate?.toLocaleDateString('zh-CN')}
+          categories={post.data.category ? [{ name: post.data.category, url: `/categories/${post.data.category}` }] : []}
+          tags={post.data.tags?.map((tag: string) => ({ name: tag, url: `/tags/${tag}` })) || []}
           excerpt={post.data.description}
-          categories={post.data.tags?.map((tag: string) => ({ name: tag, url: `/tags/${tag}` })) || []}
           backgroundImage={post.data.backgroundImage}
+          isPinned={false}
+          showFullMeta={false}
         />
       ))
     )}

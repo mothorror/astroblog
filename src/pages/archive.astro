@@ -3,7 +3,8 @@ import NextLayout from '../layouts/NextLayout.astro';
 import { getCollection } from 'astro:content';
 
 // Get all posts from content collection
-const allPosts = (await getCollection('posts'))
+const allPosts = (await getCollection('blog'))
+  .filter(post => post.data.draft !== true)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 // Group posts by year and month
