@@ -7,5 +7,11 @@
     "paths": {
       "astro/loaders": ["./node_modules/astro/dist/content/loaders/index.js"]
     }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "blackwhite-theme",
+    "blackwhite-theme-*.tar.gz"
+  ]
 }

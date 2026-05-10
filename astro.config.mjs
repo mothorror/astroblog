@@ -28,6 +28,8 @@ export default defineConfig({
       },
     },
   },
+  // 排除不需要构建的目录
+  exclude: ['blackwhite-theme/**', 'blackwhite-theme-*.tar.gz'],
   build: {
     format: 'directory', // 使用目录格式，URL 更清晰
   },
