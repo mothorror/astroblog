@@ -3,9 +3,9 @@ import NextLayout from '../../layouts/NextLayout.astro';
 import PostCardNext from '../../components/PostCardNext.astro';
 import { getCollection } from 'astro:content';
 
-const POSTS_PER_PAGE = 5;
-
 export async function getStaticPaths() {
+  const POSTS_PER_PAGE = 5;
+
   try {
     const allPosts = await getCollection('blog');
     const publishedPosts = allPosts.filter(post => post.data.draft !== true);
@@ -19,6 +19,7 @@ export async function getStaticPaths() {
       });
     }
 
+    console.log(`Generated ${paths.length} pagination paths for ${publishedPosts.length} posts (total pages: ${totalPages})`);
     return paths;
   } catch (error) {
     console.error('Error generating pagination paths:', error);
@@ -27,6 +28,8 @@ export async function getStaticPaths() {
 }
 
 // 获取所有文章并按发布时间排序
+const POSTS_PER_PAGE = 5;
+
 let sortedPosts: any[] = [];
 try {
   const allPosts = await getCollection('blog');
