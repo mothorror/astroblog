@@ -6,8 +6,8 @@ import Giscus from '../../components/Giscus.astro';
 // Generate static paths for all published posts
 export async function getStaticPaths() {
   try {
-    const posts = await getCollection('posts');
-    const publishedPosts = posts.filter(post => post.data.status !== 'draft');
+    const posts = await getCollection('blog');
+    const publishedPosts = posts.filter(post => post.data.draft !== true);
 
     return publishedPosts.map((post) => ({
       params: { slug: post.id.replace('.md', '') },
@@ -50,9 +50,9 @@ const formattedUpdatedDate = data.updatedDate ? formatDate(data.updatedDate) : n
 // Get all posts for navigation (sorted by date)
 let sortedPosts: any[] = [];
 try {
-  const allPosts = await getCollection('posts');
+  const allPosts = await getCollection('blog');
   sortedPosts = allPosts
-    .filter(p => p.data.status !== 'draft')
+    .filter(p => p.data.draft !== true)
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 } catch (error) {
   console.error('Error fetching posts for navigation:', error);
@@ -121,7 +121,7 @@ const wordCount = rawContent.length;
                 <span class="post-meta-item-icon">
                   <i class="fa-regular fa-pen-to-square"></i>
                 </span>
-                <span title="作者">作者：Xiting</span>
+                <span title="作者">作者：xiting</span>
               </span>
             </div>
 
@@ -137,25 +137,6 @@ const wordCount = rawContent.length;
                       <span itemprop="name">{data.category}</span>
                     </a>
                   </span>
-                </span>
-              </div>
-            )}
-
-            <!-- 第四行：标签 -->
-            {data.tags && data.tags.length > 0 && (
-              <div class="post-meta-row">
-                <span class="post-tags-inline">
-                  <span class="post-meta-item-icon">
-                    <i class="fa-solid fa-tags"></i>
-                  </span>
-                  {data.tags?.map((tag: string, index: number) => (
-                    <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                      <a href={`/tags/${tag}`} itemprop="url" rel="index">
-                        <span itemprop="name">{tag}</span>
-                      </a>
-                      {index < (data.tags?.length || 0) - 1 && ', '}
-                    </span>
-                  ))}
                 </span>
               </div>
             )}
@@ -480,22 +461,26 @@ const wordCount = rawContent.length;
     background-color: #f6f8fa;
   }
 
-  /* Custom blockquote styles - note, info, warning, danger */
+  /* Custom blockquote styles - note, info, warning, danger, tip, success, primary, flat */
   .post-body :global(blockquote.note),
   .post-body :global(blockquote.info),
   .post-body :global(blockquote.warning),
-  .post-body :global(blockquote.danger) {
+  .post-body :global(blockquote.danger),
+  .post-body :global(blockquote.tip),
+  .post-body :global(blockquote.success),
+  .post-body :global(blockquote.primary),
+  .post-body :global(blockquote.flat) {
     margin: 32px 0 !important;
     padding: 12px 16px;
     border-left: 8px solid;
-    background: #f5f5f5;
     border-radius: 0;
     line-height: 1.6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
   .post-body :global(blockquote.note) {
-    border-left-color: #777;
-    background: #f0f0f0;
+    border-left-color: #6c757d;
+    background: #f8f9fa;
   }
 
   .post-body :global(blockquote.info) {
@@ -504,7 +489,7 @@ const wordCount = rawContent.length;
   }
 
   .post-body :global(blockquote.warning) {
-    border-left-color: #f0ad4e;
+    border-left-color: #ff9800;
     background: #fff3e0;
   }
 
@@ -513,18 +498,46 @@ const wordCount = rawContent.length;
     background: #ffebee;
   }
 
-  /* Fix note/info/warning/danger 内部元素的间距 */
+  .post-body :global(blockquote.tip) {
+    border-left-color: #4caf50;
+    background: #e8f5e9;
+  }
+
+  .post-body :global(blockquote.success) {
+    border-left-color: #28a745;
+    background: #d4edda;
+  }
+
+  .post-body :global(blockquote.primary) {
+    border-left-color: #34495e;
+    background: #eaedf0;
+  }
+
+  .post-body :global(blockquote.flat) {
+    border-left-color: #95a5a6;
+    background: #f5f5f5;
+  }
+
+  /* Fix note/info/warning/danger/tip/success/primary/flat 内部元素的间距 */
   .post-body :global(blockquote.note > *:first-child),
   .post-body :global(blockquote.info > *:first-child),
   .post-body :global(blockquote.warning > *:first-child),
-  .post-body :global(blockquote.danger > *:first-child) {
+  .post-body :global(blockquote.danger > *:first-child),
+  .post-body :global(blockquote.tip > *:first-child),
+  .post-body :global(blockquote.success > *:first-child),
+  .post-body :global(blockquote.primary > *:first-child),
+  .post-body :global(blockquote.flat > *:first-child) {
     margin-top: 0 !important;
   }
 
   .post-body :global(blockquote.note > *:last-child),
   .post-body :global(blockquote.info > *:last-child),
   .post-body :global(blockquote.warning > *:last-child),
-  .post-body :global(blockquote.danger > *:last-child) {
+  .post-body :global(blockquote.danger > *:last-child),
+  .post-body :global(blockquote.tip > *:last-child),
+  .post-body :global(blockquote.success > *:last-child),
+  .post-body :global(blockquote.primary > *:last-child),
+  .post-body :global(blockquote.flat > *:last-child) {
     margin-bottom: 0 !important;
   }
 
@@ -578,34 +591,6 @@ const wordCount = rawContent.length;
   .post-body :global(span.labelorange) {
     background: #fff3e0 !important;
     color: #333 !important;
-  }
-
-  .post-body :global(blockquote.primary) {
-    margin: 1em 0;
-    padding: 10px 15px;
-    border-left: 6px solid #337ab7;
-    background: #f5f9fc;
-    border-radius: 4px;
-    color: #333;
-  }
-
-  .post-body :global(blockquote.success) {
-    margin: 1em 0;
-    padding: 10px 15px;
-    border-left: 6px solid #5cb85c;
-    background: #f3f9f7;
-    border-radius: 4px;
-    color: #333;
-  }
-
-  .post-body :global(blockquote.flat) {
-    margin: 1em 0;
-    padding: 8px 12px;
-    background: #f5f5f5;
-    border-left: 6px solid #ccc;
-    border-radius: 2px;
-    font-size: 14px;
-    color: #555;
   }
 
   /* Post Tags Styles */

@@ -4,7 +4,7 @@ pubDate: 2026-05-07T16:00:00.000Z
 description: '这是第一篇文章，介绍了博客的基本功能和特点。'
 category: '公告'
 tags: ['测试']
-status: published
+draft: false
 ---
 
 ## 欢迎使用 Astro 博客

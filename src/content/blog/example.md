@@ -4,6 +4,7 @@ pubDate: 2026-05-09T16:00:00.000Z
 description: "演示如何在 Markdown 文件中使用分类和标签功能"
 category: "技术教程"
 tags: ["Astro", "前端开发", "静态博客"]
+draft: false
 ---
 
 # 分类和标签使用指南

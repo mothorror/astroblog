@@ -1,0 +1,37 @@
+import { defineConfig } from 'astro/config';
+import mdx from '@astrojs/mdx';
+import remarkDirective from 'remark-directive';
+import { customBlockquotes, customInlineLabels } from './remark-custom-blockquotes.js';
+
+export default defineConfig({
+  integrations: [
+    mdx(),
+  ],
+  markdown: {
+    remarkPlugins: [remarkDirective, customBlockquotes, customInlineLabels],
+    syntaxHighlight: 'shiki', 
+    gfm: true, 
+    smartypants: true, 
+  },
+  output: 'static',
+  site: 'https:
+  devToolbar: {
+    enabled: false,
+  },
+  vite: {
+    server: {
+      port: 4321,
+    },
+    resolve: {
+      alias: {
+        '@': './src',
+      },
+    },
+  },
+  build: {
+    format: 'directory', 
+  },
+  experimental: {
+    clientPrerender: true, 
+  },
+});

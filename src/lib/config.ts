@@ -82,7 +82,7 @@ function getDefaultConfig(): SiteConfig {
       title: "Xiting's Blog",
       description: '黑果小兵,daliansky,blog.daliansky.net,macOS,Hackintosh,黑苹果,linux',
       keywords: 'daliansky,黑果小兵,macOS,Hackintosh,黑苹果,linux,blog.daliansky.net',
-      author: 'Xiting'
+      author: 'xiting'
     },
     background: {
       mode: 'png',

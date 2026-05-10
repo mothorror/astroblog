@@ -46,56 +46,92 @@ draft: false
 
 ### Info 信息框
 
-[!info]@这是一个信息提示框，用于提供补充说明和额外信息。@
+:::info
+这是一个信息提示框，用于提供补充说明和额外信息。
+:::
 
 ### Note 笔记框
 
-[!note]@这是一个笔记框，用于记录重要的要点和备忘内容。@
+:::note
+这是一个笔记框，用于记录重要的要点和备忘内容。
+:::
 
 ### Warning 警告框
 
-[!warning]@这是一个警告框，用于提醒用户注意潜在问题。@
+:::warning
+这是一个警告框，用于提醒用户注意潜在问题。
+:::
 
 ### Danger 危险框
 
-[!danger]@这是一个危险框，用于警示严重错误或危险操作。@
+:::danger
+这是一个危险框，用于警示严重错误或危险操作。
+:::
 
 ### Tip 提示框
 
-[!tip]@这是一个提示框，用于分享有用的技巧和建议。@
+:::tip
+这是一个提示框，用于分享有用的技巧和建议。
+:::
 
 ### Success 成功框
 
-[!success]@这是一个成功框，用于显示操作成功或积极结果。@
+:::success
+这是一个成功框，用于显示操作成功或积极结果。
+:::
 
 ### 语法示例
 
 ```markdown
-[!info]@信息内容@
+:::info
+信息内容
+:::
 
-[!note]@笔记内容@
+:::note
+笔记内容
+:::
 
-[!warning]@警告内容@
+:::warning
+警告内容
+:::
 
-[!danger]@危险内容@
+:::danger
+危险内容
+:::
 
-[!tip]@提示内容@
+:::tip
+提示内容
+:::
 
-[!success]@成功内容@
+:::success
+成功内容
+:::
 ```
 
 ## 3. 自定义区块
 
-支持带标题的自定义内容区块。
+系统支持7种预定义的容器类型：
+
+- **info** - 信息提示
+- **note** - 笔记记录
+- **warning** - 警告提醒
+- **danger** - 危险警示
+- **tip** - 技巧建议
+- **success** - 成功状态
+- **primary** - 主要内容
 
 ### 示例区块
 
-[!div]@标题@自定义区块内容，可以包含任意文本和格式。
+:::primary
+这是一个主要内容区块，可以用于突出显示重要信息。
+:::
 
 ### 语法示例
 
 ```markdown
-[!div]@区块标题@区块内容
+:::primary
+主要内容
+:::
 ```
 
 ## 4. Markdown 基础格式
@@ -146,11 +182,13 @@ draft: false
 
 ### 代码块
 
-\`\`\`javascript
+代码块使用三个反引号包裹，并指定语言：
+
+```javascript
 function hello() {
   console.log('Hello, BlackWhite!');
 }
-\`\`\`
+```
 
 ### 语法高亮
 
@@ -158,33 +196,33 @@ function hello() {
 
 #### JavaScript
 
-\`\`\`javascript
+```javascript
 const greeting = 'Hello, World!';
 console.log(greeting);
-\`\`\`
+```
 
 #### Python
 
-\`\`\`python
+```python
 def greet():
     print("Hello, World!")
-\`\`\`
+```
 
 #### CSS
 
-\`\`\`css
+```css
 .container {
   max-width: 1200px;
   margin: 0 auto;
 }
-\`\`\`
+```
 
 #### Bash
 
-\`\`\`bash
+```bash
 npm install
 npm run dev
-\`\`\`
+```
 
 ## 6. 表格
 
@@ -204,17 +242,21 @@ npm run dev
 
 ### 链接
 
+```markdown
 [文本链接](https://example.com)
+```
 
 ### 图片
 
+```markdown
 ![替代文本](图片URL)
+```
 
 ## 8. 分类和标签
 
 在文章 Frontmatter 中定义：
 
-\`\`\`yaml
+```yaml
 ---
 title: '文章标题'
 description: '文章描述'
@@ -223,7 +265,7 @@ category: '技术'
 tags: ['JavaScript', 'Astro', '前端开发']
 draft: false
 ---
-\`\`\`
+```
 
 ## 9. 快速参考
 

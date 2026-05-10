@@ -3,24 +3,23 @@ import NextLayout from '../layouts/NextLayout.astro';
 import PostCardNext from '../components/PostCardNext.astro';
 import { getCollection } from 'astro:content';
 
-// 从 blog 目录获取所有已发布的文章
-const allPosts = (await getCollection('blog'))
+const allPosts = (await getCollection('posts'))
   .filter(post => {
-    // 只显示已发布的文章
-    if (post.data.draft === true) return false;
+    
+    if (post.data.status === 'draft') return false;
+    
+    if (post.id === 'blog.md') return false;
     return true;
   })
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-// 分页设置
-const POSTS_PER_PAGE = 6;
+const POSTS_PER_PAGE = 10;
 const currentPage = 1;
 const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
 const endIndex = startIndex + POSTS_PER_PAGE;
 const posts = allPosts.slice(startIndex, endIndex);
 const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
 
-// 生成页码
 const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 ---
 
@@ -37,7 +36,7 @@ const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
           url={`/blog/${post.id.replace('.md', '')}/`}
           date={post.data.pubDate.toLocaleDateString('zh-CN')}
           updatedDate={post.data.updatedDate?.toLocaleDateString('zh-CN')}
-          categories={post.data.category ? [{ name: post.data.category, url: `/categories/${post.data.category}` }] : []}
+          categories={[]}
           tags={post.data.tags?.map(tag => ({ name: tag, url: `/tags/${tag}` })) || []}
           excerpt={post.data.description}
           backgroundImage={post.data.backgroundImage}

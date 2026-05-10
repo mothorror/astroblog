@@ -23,7 +23,7 @@ const {
   date,
   updatedDate,
   wordCount,
-  author = 'Xiting',
+  author = 'xiting',
   categories = [],
   tags = [],
   excerpt,
@@ -389,6 +389,76 @@ if (content) {
     margin: 1em 0;
     color: #666;
     font-style: italic;
+  }
+
+  /* 容器区块样式 */
+  .post-content :global(blockquote.info),
+  .post-content :global(blockquote.note),
+  .post-content :global(blockquote.warning),
+  .post-content :global(blockquote.danger),
+  .post-content :global(blockquote.tip),
+  .post-content :global(blockquote.success),
+  .post-content :global(blockquote.primary),
+  .post-content :global(blockquote.flat) {
+    margin: 32px 0;
+    padding: 12px 16px;
+    border-left: 8px solid;
+    border-radius: 0;
+    background: #f9f9f9;
+    font-style: normal;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .post-content :global(blockquote.info) {
+    border-left-color: #5bc0de;
+    background: #e3f2fd;
+  }
+
+  .post-content :global(blockquote.note) {
+    border-left-color: #6c757d;
+    background: #f8f9fa;
+  }
+
+  .post-content :global(blockquote.warning) {
+    border-left-color: #ff9800;
+    background: #fff3e0;
+  }
+
+  .post-content :global(blockquote.danger) {
+    border-left-color: #dc3545;
+    background: #ffebee;
+  }
+
+  .post-content :global(blockquote.tip) {
+    border-left-color: #4caf50;
+    background: #e8f5e9;
+  }
+
+  .post-content :global(blockquote.success) {
+    border-left-color: #28a745;
+    background: #d4edda;
+  }
+
+  .post-content :global(blockquote.primary) {
+    border-left-color: #34495e;
+    background: #eaedf0;
+  }
+
+  .post-content :global(blockquote.flat) {
+    border-left-color: #95a5a6;
+    background: #f5f5f5;
+  }
+
+  /* 容器区块内的元素样式 */
+  .post-content :global(blockquote.info p),
+  .post-content :global(blockquote.note p),
+  .post-content :global(blockquote.warning p),
+  .post-content :global(blockquote.danger p),
+  .post-content :global(blockquote.tip p),
+  .post-content :global(blockquote.success p),
+  .post-content :global(blockquote.primary p),
+  .post-content :global(blockquote.flat p) {
+    margin: 0;
   }
 
   .post-content :global(ul),
