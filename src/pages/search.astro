@@ -301,7 +301,6 @@ const searchIndexJSON = JSON.stringify(searchIndex);
 
       // 搜索算法
       const results = searchIndex.map(doc => {
-        let score = 0;
         let titleMatches = 0;
         let contentMatches = 0;
         let tagMatches = 0;
@@ -310,7 +309,6 @@ const searchIndexJSON = JSON.stringify(searchIndex);
         const titleLower = doc.title.toLowerCase();
         const contentLower = doc.content.toLowerCase();
         const descriptionLower = doc.description.toLowerCase();
-        const combinedText = `${titleLower} ${descriptionLower} ${contentLower}`;
 
         // 标题匹配（权重最高）
         keywords.forEach(keyword => {
@@ -340,7 +338,7 @@ const searchIndexJSON = JSON.stringify(searchIndex);
         });
 
         // 计算得分
-        score = titleMatches * 10 + tagMatches * 5 + categoryMatches * 3 + contentMatches;
+        const score = titleMatches * 10 + tagMatches * 5 + categoryMatches * 3 + contentMatches;
 
         return {
           doc,
@@ -372,7 +370,7 @@ const searchIndexJSON = JSON.stringify(searchIndex);
       searchStatus.textContent = `找到 ${results.length} 篇文章`;
 
       const resultsHTML = results.map(result => {
-        const { doc, score } = result;
+        const { doc } = result;
         const date = new Date(doc.date).toLocaleDateString('zh-CN');
 
         return `

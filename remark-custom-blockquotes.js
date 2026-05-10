@@ -10,8 +10,6 @@ import { visit } from 'unist-util-visit';
  * Supported types: note, warning, danger, info, primary, success, flat
  */
 export function customBlockquotes() {
-  const supportedTypes = ['note', 'warning', 'danger', 'info', 'primary', 'success', 'flat'];
-
   return (tree) => {
     visit(tree, (node) => {
       // Check if node is a container directive

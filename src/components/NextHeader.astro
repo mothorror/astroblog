@@ -277,7 +277,7 @@ const menuItems = [
     const searchPopup = document.querySelector('.search-popup');
     const closeBtn = document.querySelector('.popup-btn-close');
 
-    searchBtn?.addEventListener('click', function(e) {
+    searchBtn?.addEventListener('click', function() {
       // 允许默认跳转到搜索页面
       // 不阻止默认行为，让链接正常工作
     });
@@ -314,7 +314,7 @@ const menuItems = [
     }
 
     if (navToggle) {
-      navToggle.addEventListener('click', function(e) {
+      navToggle.addEventListener('click', function() {
         // 如果正在拖动，不触发点击事件
         if (navToggle.classList.contains('dragging')) {
           return;
@@ -326,16 +326,12 @@ const menuItems = [
 
     // 拖动功能
     let isDragging = false;
-    let dragStartX = 0;
-    let dragStartY = 0;
     let offsetX = 0;
     let offsetY = 0;
 
     if (navToggle) {
       navToggle.addEventListener('mousedown', function(e) {
         isDragging = true;
-        dragStartX = e.clientX;
-        dragStartY = e.clientY;
 
         const rect = navToggle.getBoundingClientRect();
         offsetX = e.clientX - rect.left;
@@ -371,9 +367,8 @@ const menuItems = [
     // Close nav when clicking on menu items
     const mobileMenuItems = document.querySelectorAll('.site-nav .menu-item a');
     console.log('[Nav] Found menu items:', mobileMenuItems.length);
-    mobileMenuItems.forEach((item, index) => {
-      item.addEventListener('click', function(e) {
-        console.log('[Nav] Menu item clicked:', index);
+    mobileMenuItems.forEach((item) => {
+      item.addEventListener('click', function() {
         if (window.innerWidth <= 767 && siteNav && siteNav.classList.contains('active')) {
           toggleNav();
         }

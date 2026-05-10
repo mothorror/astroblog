@@ -20,8 +20,8 @@ export interface SearchDocument {
  */
 export async function generateSearchIndex(): Promise<SearchDocument[]> {
   try {
-    const posts = await getCollection('posts');
-    const publishedPosts = posts.filter(post => post.data.status !== 'draft');
+    const posts = await getCollection('blog');
+    const publishedPosts = posts.filter(post => post.data.draft !== true);
 
     const searchIndex: SearchDocument[] = publishedPosts.map(post => {
       // 移除 HTML 标签，提取纯文本
