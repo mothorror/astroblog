@@ -19,7 +19,7 @@ background:
     position: 'center'
     attachment: 'fixed'
   mp4:
-    url: 'https://xitingit.top/KKOVO-%E4%B9%99%E9%AA%A8%E5%BF%A7%E5%A4%AA.mp4'
+    url: 'https://pan.xitingit.top/KKOVO.mp4'
     opacity: 0.85
     autoplay: true
     loop: true
