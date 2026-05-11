@@ -5,11 +5,12 @@
     <a href="https://beian.miit.gov.cn/" target="_blank">鄂ICP备2026023011号-1</a>
     |
     &copy; 2026 <i class="fa-solid fa-robot"></i> Xiting
-  </div>
-  <div class="footer-upyun">
-    <a href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral" target="_blank" rel="nofollow">
+    |
+    本网站由
+    <a href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral" target="_blank" rel="nofollow" class="upyun-link">
       <img src="/upyun_logo.png" alt="又拍云" class="upyun-logo">
     </a>
+    提供CDN加速
   </div>
 </footer>
 
@@ -28,6 +29,11 @@
     max-width: 800px;
     margin: 0 auto;
     padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px 10px;
   }
 
   .footer-inner a {
@@ -39,14 +45,16 @@
     margin: 0 2px;
   }
 
-  .footer-upyun {
-    margin-top: 15px;
+  .upyun-link {
+    display: inline-flex;
+    align-items: center;
   }
 
   .upyun-logo {
-    height: 30px;
+    height: 20px;
     opacity: 0.8;
     transition: opacity 0.3s ease;
+    vertical-align: middle;
   }
 
   .upyun-logo:hover {
